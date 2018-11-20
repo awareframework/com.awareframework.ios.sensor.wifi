@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'com.awareframework.ios.sensor.wifi_Example' do
+  pod 'com.awareframework.ios.sensor.wifi', :path => '../'
+
+  target 'com.awareframework.ios.sensor.wifi_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
