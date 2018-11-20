@@ -1,5 +1,5 @@
 import XCTest
-import com.awareframework.ios.sensor.wifi
+import com_awareframework_ios_sensor_wifi
 
 class Tests: XCTestCase {
     
