@@ -1,6 +1,6 @@
 # Aware WiFi
 
-[![CI Status](https://img.shields.io/travis/tetujin/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://travis-ci.org/tetujin/com.awareframework.ios.sensor.wifi)
+[![CI rtatus](https://img.shields.io/travis/awareframework/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://travis-ci.org/awareframework/com.awareframework.ios.sensor.wifi)
 [![Version](https://img.shields.io/cocoapods/v/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 [![License](https://img.shields.io/cocoapods/l/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 [![Platform](https://img.shields.io/cocoapods/p/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)

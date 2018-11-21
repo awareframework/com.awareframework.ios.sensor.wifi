@@ -92,7 +92,7 @@ public class WifiSensor: AwareSensor {
      */
     public static let ACTION_AWARE_WIFI_REQUEST_SCAN = "ACTION_AWARE_WIFI_REQUEST_SCAN"
     
-    var CONFIG = Config()
+    public var CONFIG = Config()
     
     let reachability = Reachability()
     
