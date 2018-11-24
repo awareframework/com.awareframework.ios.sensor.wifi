@@ -5,11 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 [![Platform](https://img.shields.io/cocoapods/p/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+**Aware WiFi** (com.awareframework.ios.sensor.wifi) is a plugin for AWARE Framework which is one of an open-source context-aware instrument. This plugin allows us to handle WiFi conditions and events.
 
 ## Requirements
+iOS 10 or later
 
 ## Installation
 
@@ -28,10 +27,56 @@ import com_awareframework_ios_sensor_wifi
 
 3. Turn ON `Access WiFi Information` capability on the Xcode project
 
+## Public functions
+
+### WifiSensor
+
+* `init(config:WiFiSensor.Config?)` : Initializes the WiFi sensor with the optional configuration.
+* `start()`: Starts the gyroscope sensor with the optional configuration.
+* `stop()`: Stops the service.
+
+
+### WifiSensor.Config
+
+Class to hold the configuration of the sensor.
+
+#### Fields
+
++ `sensorObserver: WiFiObserver`: Callback for live data updates.
++ `enabled: Boolean` Sensor is enabled or not. (default = `false`)
++ `debug: Boolean` enable/disable logging to `Logcat`. (default = `false`)
++ `label: String` Label for the data. (default = "")
++ `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
++ `dbEncryptionKey` Encryption key for the database. (default = `null`)
++ `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
++ `dbPath: String` Path of the database. (default = "aware_battery")
++ `dbHost: String` Host for syncing the database. (default = `null`)
+
+## Broadcasts
+
++ `WiFiSensor.ACTION_AWARE_WIFI_CURRENT_AP` currently connected to this AP. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_NEW_DEVICE` new WiFi AP device detected. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_STARTED` WiFi scan started
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_ENDED` WiFi scan ended.
+
+## Data Representations
+
+### WiFi Scan Data
+
+| Field     | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| bssid     | String | currently connected access point MAC address                    |
+| ssid      | String | currently connected access point network name                   |
+| deviceId  | String | AWARE device UUID                                               |
+| label     | String | Customizable label. Useful for data calibration or traceability |
+| timestamp | Long   | Unixtime milliseconds since 1970                                |
+| timezone  | Int    | WiFi of the device                                              |
+| os        | String | Operating system of the device (ex. android)                    |
+
 ## Example usage
 
 ```swift
-let wifiSensor = WifiSensor.init(WifiSensor.Config().apply{config in
+let wifiSensor = WiFiSensor.init(WifiSensor.Config().apply{config in
     config.sensorObserver = Observer()
     config.dbType = .REALM
     config.debug = true
@@ -46,7 +91,7 @@ wifiSensor.stop()
 
 ```swift
 // Implement an interface of WifiObserver
-class Observer:WifiObserver {
+class Observer:WiFiObserver {
     func onWiFiAPDetected(data: WiFiScanData) {
         // Your code here ..
     }
