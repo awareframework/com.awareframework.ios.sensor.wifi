@@ -1,11 +1,11 @@
-# Aware WiFi
+# AWARE: WiFi
 
 [![CI rtatus](https://img.shields.io/travis/awareframework/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://travis-ci.org/awareframework/com.awareframework.ios.sensor.wifi)
 [![Version](https://img.shields.io/cocoapods/v/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 [![License](https://img.shields.io/cocoapods/l/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 [![Platform](https://img.shields.io/cocoapods/p/com.awareframework.ios.sensor.wifi.svg?style=flat)](https://cocoapods.org/pods/com.awareframework.ios.sensor.wifi)
 
-**Aware WiFi** (com.awareframework.ios.sensor.wifi) is a plugin for AWARE Framework which is one of an open-source context-aware instrument. This plugin allows us to handle WiFi conditions and events.
+This sensor allows us to handle WiFi conditions and events.
 
 ## Requirements
 iOS 10 or later
@@ -32,7 +32,7 @@ import com_awareframework_ios_sensor_wifi
 ### WifiSensor
 
 * `init(config:WiFiSensor.Config?)` : Initializes the WiFi sensor with the optional configuration.
-* `start()`: Starts the gyroscope sensor with the optional configuration.
+* `start()`: Starts the WiFi sensor with the optional configuration.
 * `stop()`: Stops the service.
 
 
@@ -49,7 +49,7 @@ Class to hold the configuration of the sensor.
 + `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
 + `dbEncryptionKey` Encryption key for the database. (default = `null`)
 + `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
-+ `dbPath: String` Path of the database. (default = "aware_battery")
++ `dbPath: String` Path of the database. (default = "aware_wifi")
 + `dbHost: String` Host for syncing the database. (default = `null`)
 
 ## Broadcasts

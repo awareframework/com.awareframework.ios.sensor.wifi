@@ -8,30 +8,29 @@
 import UIKit
 import com_awareframework_ios_sensor_core
 import Reachability
-import SwiftyJSON
 import NetworkExtension
 import SystemConfiguration.CaptiveNetwork
 
 extension Notification.Name {
-    public static let actionAwareWiFiStart    = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_START)
-    public static let actionAwareWiFiStop     = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_STOP)
-    public static let actionAwareWiFiSync     = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_SYNC)
-    public static let actionAwareWiFiSetLabel = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_SET_LABEL)
+    public static let actionAwareWiFiStart    = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_START)
+    public static let actionAwareWiFiStop     = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_STOP)
+    public static let actionAwareWiFiSync     = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_SYNC)
+    public static let actionAwareWiFiSetLabel = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_SET_LABEL)
     
-    public static let actionAwareWiFiCurrentAP   = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_CURRENT_AP)
-    public static let actionAwareWiFiNewDevice   = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_NEW_DEVICE)
-    public static let actionAwareWiFiScanStarted = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_SCAN_STARTED)
-    public static let actionAwareWiFiScanEnded   = Notification.Name(WifiSensor.ACTION_AWARE_WIFI_SCAN_ENDED)
+    public static let actionAwareWiFiCurrentAP   = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_CURRENT_AP)
+    public static let actionAwareWiFiNewDevice   = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_NEW_DEVICE)
+    public static let actionAwareWiFiScanStarted = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_SCAN_STARTED)
+    public static let actionAwareWiFiScanEnded   = Notification.Name(WiFiSensor.ACTION_AWARE_WIFI_SCAN_ENDED)
 }
 
-public protocol WifiObserver{
+public protocol WiFiObserver{
     func onWiFiAPDetected(data: WiFiScanData)
     func onWiFiDisabled()
     func onWiFiScanStarted()
     func onWiFiScanEnded()
 }
 
-public class WifiSensor: AwareSensor {
+public class WiFiSensor: AwareSensor {
 
     public static let TAG = "Aware::WiFi"
     
@@ -100,29 +99,26 @@ public class WifiSensor: AwareSensor {
     
     public class Config:SensorConfig{
       
-        public var sensorObserver:WifiObserver?
-        public var frequency: Double = 1
+        public var sensorObserver:WiFiObserver?
+        
+        public var interval: Int = 1 // min
         
         public override init() {
             super.init()
             self.dbPath = "aware_wifi"
         }
         
-        public convenience init(_ json:JSON){
-            self.init()
-        }
-        
-        public func apply(closure:(_ config:WifiSensor.Config) -> Void ) -> Self {
+        public func apply(closure:(_ config:WiFiSensor.Config) -> Void ) -> Self {
             closure(self)
             return self
         }
     }
     
     public override convenience init(){
-        self.init(WifiSensor.Config())
+        self.init(WiFiSensor.Config())
     }
     
-    public init(_ config:WifiSensor.Config){
+    public init(_ config:WiFiSensor.Config){
         super.init()
         CONFIG = config
         initializeDbEngine(config: config)
@@ -131,7 +127,7 @@ public class WifiSensor: AwareSensor {
     public override func start() {
         
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.frequency*60, repeats: true, block: { timer in
+            timer = Timer.scheduledTimer(withTimeInterval: Double(CONFIG.interval)*60.0, repeats: true, block: { timer in
                 
                 self.notificationCenter.post(name: .actionAwareWiFiScanStarted, object: nil)
                 if let observer = self.CONFIG.sensorObserver{
@@ -151,7 +147,7 @@ public class WifiSensor: AwareSensor {
                                 wifiObserver.onWiFiAPDetected(data: scanData)
                                 self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
                                                              object: nil,
-                                                             userInfo: [WifiSensor.EXTRA_DATA: scanData.toDictionary()])
+                                                             userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
                             }
                         }
                     }
@@ -190,7 +186,7 @@ public class WifiSensor: AwareSensor {
                                     engin.save(deviceData,WifiDeviceData.TABLE_NAME)
                                     self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
                                                                  object: nil,
-                                                                 userInfo: [WifiSensor.EXTRA_DATA: deviceData.toDictionary()])
+                                                                 userInfo: [WiFiSensor.EXTRA_DATA: deviceData.toDictionary()])
                                 }
                             }
                         }
@@ -204,7 +200,7 @@ public class WifiSensor: AwareSensor {
                 }
                 try uwReachability.startNotifier()
             } catch {
-                print("\(WifiSensor.TAG)\(error)")
+                print("\(WiFiSensor.TAG)\(error)")
             }
         }
         
