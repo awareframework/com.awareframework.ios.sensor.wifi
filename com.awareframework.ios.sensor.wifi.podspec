@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'com.awareframework.ios.sensor.wifi'
-  s.version       = '0.1.2'
+  s.version       = '0.2.0'
   s.summary          = 'A WiFi Sensor Module for AWARE Framework.'
 
 # This description is used to generate tags and improve search results.
