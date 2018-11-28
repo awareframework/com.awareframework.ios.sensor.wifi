@@ -223,7 +223,7 @@ public class WiFiSensor: AwareSensor {
     
     public override func sync(force: Bool = false) {
         if let engin = self.dbEngine {
-            engin.startSync(WifiDeviceData.TABLE_NAME, DbSyncConfig.init().apply{ config in
+            engin.startSync(WifiDeviceData.TABLE_NAME, WifiDeviceData.self, DbSyncConfig.init().apply{ config in
                 config.debug = CONFIG.debug
             })
         }
