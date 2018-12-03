@@ -9,7 +9,7 @@ import UIKit
 import RealmSwift
 import com_awareframework_ios_sensor_core
 
-public class WifiDeviceData: AwareObject {
+public class WiFiDeviceData: AwareObject {
     
     public static var TABLE_NAME = "wifiDeviceData"
     

@@ -37,23 +37,23 @@ public class WiFiSensor: AwareSensor {
     /**
      * Received event: Fire it to start the WiFi sensor.
      */
-    public static let ACTION_AWARE_WIFI_START = "com.aware.android.sensor.wifi.SENSOR_START"
+    public static let ACTION_AWARE_WIFI_START = "com.aware.sensor.wifi.SENSOR_START"
     
     /**
      * Received event: Fire it to stop the WiFi sensor.
      */
-    public static let ACTION_AWARE_WIFI_STOP = "com.aware.android.sensor.wifi.SENSOR_STOP"
+    public static let ACTION_AWARE_WIFI_STOP = "com.aware.sensor.wifi.SENSOR_STOP"
     
     /**
      * Received event: Fire it to sync the data with the server.
      */
-    public static let ACTION_AWARE_WIFI_SYNC = "com.aware.android.sensor.wifi.SYNC"
+    public static let ACTION_AWARE_WIFI_SYNC = "com.aware.sensor.wifi.SYNC"
     
     /**
      * Received event: Fire it to set the data label.
      * Use [EXTRA_LABEL] to send the label string.
      */
-    public static let ACTION_AWARE_WIFI_SET_LABEL = "com.aware.android.sensor.wifi.SET_LABEL"
+    public static let ACTION_AWARE_WIFI_SET_LABEL = "com.aware.sensor.wifi.SET_LABEL"
     
     /**
      * Label string sent in the intent extra.
@@ -138,18 +138,25 @@ public class WiFiSensor: AwareSensor {
                 if let uwReachability = self.reachability{
                     if uwReachability.connection == .wifi {
                         let networkInfos = self.getNetworkInfos()
-                        if let wifiObserver = self.CONFIG.sensorObserver {
-                            for info in networkInfos{
-                                // send a WiFiScanData via observer
-                                let scanData = WiFiScanData.init()
-                                scanData.ssid = info.ssid
-                                scanData.bssid = info.bssid
-                                wifiObserver.onWiFiAPDetected(data: scanData)
-                                self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
-                                                             object: nil,
-                                                             userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+                        
+                        for info in networkInfos{
+                            // send a WiFiScanData via observer
+                            let scanData = WiFiScanData.init()
+                            scanData.ssid = info.ssid
+                            scanData.bssid = info.bssid
+                            
+                            if let engine = self.dbEngine {
+                                engine.save(scanData, WiFiScanData.TABLE_NAME)
                             }
+                            if let wifiObserver = self.CONFIG.sensorObserver {
+                                wifiObserver.onWiFiAPDetected(data: scanData)
+                            }
+                            self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
+                                                         object: nil,
+                                                         userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
                         }
+                        
+                        
                     }
                 }
                 
@@ -171,25 +178,26 @@ public class WiFiSensor: AwareSensor {
                     switch reachability.connection {
                     case .wifi:
                         let networkInfos = self.getNetworkInfos()
-                        if let observer = self.CONFIG.sensorObserver {
-                            for info in networkInfos{
-                                // send a WiFiScanData via observer
-                                let scanData = WiFiScanData.init()
-                                scanData.ssid = info.ssid
-                                scanData.bssid = info.bssid
+                        for info in networkInfos{
+                            // send a WiFiScanData via observer
+                            let scanData = WiFiScanData.init()
+                            scanData.ssid = info.ssid
+                            scanData.bssid = info.bssid
+                            if let observer = self.CONFIG.sensorObserver {
                                 observer.onWiFiAPDetected(data: scanData)
-                                // save a WiFiDeviceData info to the local-storage
-                                if let engin = self.dbEngine {
-                                    let deviceData = WifiDeviceData()
-                                    deviceData.bssid = scanData.bssid
-                                    deviceData.ssid = scanData.ssid
-                                    engin.save(deviceData,WifiDeviceData.TABLE_NAME)
-                                    self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
-                                                                 object: nil,
-                                                                 userInfo: [WiFiSensor.EXTRA_DATA: deviceData.toDictionary()])
-                                }
+                            }
+                            // save a WiFiDeviceData info to the local-storage
+                            if let engin = self.dbEngine {
+                                let deviceData = WiFiDeviceData()
+                                deviceData.bssid = scanData.bssid
+                                deviceData.ssid = scanData.ssid
+                                engin.save(deviceData,WiFiDeviceData.TABLE_NAME)
+                                self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
+                                                             object: nil,
+                                                             userInfo: [WiFiSensor.EXTRA_DATA: deviceData.toDictionary()])
                             }
                         }
+                        
                         break
                     case .cellular, .none:
                         if let observer = self.CONFIG.sensorObserver {
@@ -222,10 +230,12 @@ public class WiFiSensor: AwareSensor {
     }
     
     public override func sync(force: Bool = false) {
-        if let engin = self.dbEngine {
-            engin.startSync(WifiDeviceData.TABLE_NAME, WifiDeviceData.self, DbSyncConfig.init().apply{ config in
+        if let engine = self.dbEngine {
+            let config = DbSyncConfig.init().apply{ config in
                 config.debug = CONFIG.debug
-            })
+            }
+            engine.startSync(WiFiDeviceData.TABLE_NAME, WiFiDeviceData.self, config)
+            engine.startSync(WiFiScanData.TABLE_NAME, WiFiScanData.self, config)
         }
         self.notificationCenter.post(name: .actionAwareWiFiSync, object: nil)
     }
