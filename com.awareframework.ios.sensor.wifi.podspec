@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'com.awareframework.ios.sensor.wifi'
-  s.version       = '0.2.2'
+  s.version       = '0.2.3'
   s.summary          = 'A WiFi Sensor Module for AWARE Framework.'
 
 # This description is used to generate tags and improve search results.
@@ -41,7 +41,6 @@ This sensor allows us to handle WiFi conditions and events.
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  s.dependency 'com.awareframework.ios.sensor.core', '~> 0.3.1'
-  # s.dependency 'ReachabilitySwift'
+  s.dependency 'com.awareframework.ios.sensor.core', '~> 0.3.3'
   
 end

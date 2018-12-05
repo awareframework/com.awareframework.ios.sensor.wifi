@@ -13,16 +13,105 @@ class Tests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func testControllers(){
+        
+        let sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
+            config.debug = true
+            // config.dbType = .REALM
+        })
+        
+        /// test set label action ///
+        let expectSetLabel = expectation(description: "set label")
+        let newLabel = "hello"
+        let labelObserver = NotificationCenter.default.addObserver(forName: .actionAwareWiFiSetLabel, object: nil, queue: .main) { (notification) in
+            let dict = notification.userInfo;
+            if let d = dict as? Dictionary<String,String>{
+                XCTAssertEqual(d[WiFiSensor.EXTRA_LABEL], newLabel)
+            }else{
+                XCTFail()
+            }
+            expectSetLabel.fulfill()
+        }
+        sensor.set(label:newLabel)
+        wait(for: [expectSetLabel], timeout: 5)
+        NotificationCenter.default.removeObserver(labelObserver)
+        
+        /// test sync action ////
+        let expectSync = expectation(description: "sync")
+        let syncObserver = NotificationCenter.default.addObserver(forName: Notification.Name.actionAwareWiFiSync , object: nil, queue: .main) { (notification) in
+            expectSync.fulfill()
+            print("sync")
+        }
+        sensor.sync()
+        wait(for: [expectSync], timeout: 5)
+        NotificationCenter.default.removeObserver(syncObserver)
+        
+        
+//        #if targetEnvironment(simulator)
+//
+//        print("Controller tests (start and stop) require a real device.")
+//
+//        #else
+        
+        //// test start action ////
+        let expectStart = expectation(description: "start")
+        let observer = NotificationCenter.default.addObserver(forName: .actionAwareWiFiStart,
+                                                              object: nil,
+                                                              queue: .main) { (notification) in
+                                                                expectStart.fulfill()
+                                                                print("start")
+        }
+        sensor.start()
+        wait(for: [expectStart], timeout: 5)
+        NotificationCenter.default.removeObserver(observer)
+        
+        
+        /// test stop action ////
+        let expectStop = expectation(description: "stop")
+        let stopObserver = NotificationCenter.default.addObserver(forName: .actionAwareWiFiStop, object: nil, queue: .main) { (notification) in
+            expectStop.fulfill()
+            print("stop")
+        }
+        sensor.stop()
+        wait(for: [expectStop], timeout: 5)
+        NotificationCenter.default.removeObserver(stopObserver)
+        
+//        #endif
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure() {
-            // Put the code you want to measure the time of here.
-        }
+    func testWiFiData(){
+        let wifiDeviceDict = WiFiDeviceData().toDictionary()
+        XCTAssertNil(wifiDeviceDict["macAddress"])
+        XCTAssertNil(wifiDeviceDict["bssid"])
+        XCTAssertNil(wifiDeviceDict["ssid"])
+        
+        let wifiScanDict = WiFiScanData().toDictionary()
+        XCTAssertEqual(wifiScanDict["bssid"] as! String, "")
+        XCTAssertEqual(wifiScanDict["ssid"] as! String, "")
+        XCTAssertEqual(wifiScanDict["security"] as! String, "")
+        XCTAssertEqual(wifiScanDict["frequency"] as! Int, 0)
+        XCTAssertEqual(wifiScanDict["rssi"] as! Int, 0)
+    }
+    
+    func testConfig(){
+        
+        let interval = 3;
+        let config :Dictionary<String,Any> = ["interval":interval]
+        
+        var sensor = WiFiSensor.init(WiFiSensor.Config(config));
+        XCTAssertEqual(interval, sensor.CONFIG.interval)
+        
+        sensor = WiFiSensor.init(WiFiSensor.Config().apply{config in
+            config.interval = interval
+        });
+        XCTAssertEqual(sensor.CONFIG.interval, interval)
+        
+        sensor = WiFiSensor.init()
+        sensor.CONFIG.set(config: config)
+        XCTAssertEqual(interval, sensor.CONFIG.interval)
+        
+        sensor.CONFIG.interval = -5
+        XCTAssertEqual(sensor.CONFIG.interval, 1)
     }
     
 }

@@ -101,7 +101,15 @@ public class WiFiSensor: AwareSensor {
       
         public var sensorObserver:WiFiObserver?
         
-        public var interval: Int = 1 // min
+        // public var interval: Int = 1 // min
+        public var interval: Int = 1 {
+            didSet {
+                if self.interval < 1{
+                    print("[WiFi][Illegal Parameter] The interval value has to be greater than or equal to 1.")
+                    self.interval = 1
+                }
+            }
+        }
         
         public override init() {
             super.init()
@@ -111,6 +119,13 @@ public class WiFiSensor: AwareSensor {
         public func apply(closure:(_ config:WiFiSensor.Config) -> Void ) -> Self {
             closure(self)
             return self
+        }
+        
+        public override func set(config: Dictionary<String, Any>) {
+            super.set(config: config)
+            if let interval = config["interval"] as? Int {
+                self.interval = interval
+            }
         }
     }
     
@@ -142,6 +157,7 @@ public class WiFiSensor: AwareSensor {
                         for info in networkInfos{
                             // send a WiFiScanData via observer
                             let scanData = WiFiScanData.init()
+                            scanData.label = self.CONFIG.label
                             scanData.ssid = info.ssid
                             scanData.bssid = info.bssid
                             
@@ -181,6 +197,7 @@ public class WiFiSensor: AwareSensor {
                         for info in networkInfos{
                             // send a WiFiScanData via observer
                             let scanData = WiFiScanData.init()
+                            scanData.label = self.CONFIG.label
                             scanData.ssid = info.ssid
                             scanData.bssid = info.bssid
                             if let observer = self.CONFIG.sensorObserver {
@@ -189,6 +206,7 @@ public class WiFiSensor: AwareSensor {
                             // save a WiFiDeviceData info to the local-storage
                             if let engin = self.dbEngine {
                                 let deviceData = WiFiDeviceData()
+                                deviceData.label = self.CONFIG.label
                                 deviceData.bssid = scanData.bssid
                                 deviceData.ssid = scanData.ssid
                                 engin.save(deviceData,WiFiDeviceData.TABLE_NAME)
@@ -271,6 +289,11 @@ public class WiFiSensor: AwareSensor {
             return NetworkInfo(name, ssid,bssid)
         }
         return networkInfos
+    }
+    
+    public func set(label:String){
+        self.CONFIG.label = label
+        self.notificationCenter.post(name: .actionAwareWiFiSetLabel, object: nil, userInfo: [WiFiSensor.EXTRA_LABEL:label])
     }
 }
 
