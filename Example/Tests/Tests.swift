@@ -1,5 +1,6 @@
 import XCTest
 import com_awareframework_ios_sensor_wifi
+import com_awareframework_ios_sensor_core
 
 class Tests: XCTestCase {
     
@@ -94,7 +95,6 @@ class Tests: XCTestCase {
     }
     
     func testConfig(){
-        
         let interval = 3;
         let config :Dictionary<String,Any> = ["interval":interval]
         
@@ -114,4 +114,70 @@ class Tests: XCTestCase {
         XCTAssertEqual(sensor.CONFIG.interval, 1)
     }
     
+    func testSyncModule(){
+        #if targetEnvironment(simulator)
+        
+        print("This test requires a real WiFi.")
+        
+        #else
+        // success //
+        let sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
+            config.debug = true
+            config.dbType = .REALM
+            config.dbHost = "node.awareframework.com:1001"
+            config.dbPath = "sync_db"
+        })
+        if let engine = sensor.dbEngine as? RealmEngine {
+            engine.removeAll(WiFiScanData.self)
+            for _ in 0..<100 {
+                engine.save(WiFiScanData())
+            }
+        }
+        let successExpectation = XCTestExpectation(description: "success sync")
+        let observer = NotificationCenter.default.addObserver(forName: Notification.Name.actionAwareWiFiSyncCompletion,
+                                                              object: sensor, queue: .main) { (notification) in
+                                                                if let userInfo = notification.userInfo{
+                                                                    if let status = userInfo["status"] as? Bool {
+                                                                        if status == true {
+                                                                            successExpectation.fulfill()
+                                                                        }
+                                                                    }
+                                                                }
+        }
+        sensor.sync(force: true)
+        wait(for: [successExpectation], timeout: 20)
+        NotificationCenter.default.removeObserver(observer)
+        
+        ////////////////////////////////////
+        
+        // failure //
+        let sensor2 = WiFiSensor.init(WiFiSensor.Config().apply{ config in
+            config.debug = true
+            config.dbType = .REALM
+            config.dbHost = "node.awareframework.com.com" // wrong url
+            config.dbPath = "sync_db"
+        })
+        let failureExpectation = XCTestExpectation(description: "failure sync")
+        let failureObserver = NotificationCenter.default.addObserver(forName: Notification.Name.actionAwareWiFiSyncCompletion,
+                                                                     object: sensor2, queue: .main) { (notification) in
+                                                                        if let userInfo = notification.userInfo{
+                                                                            if let status = userInfo["status"] as? Bool {
+                                                                                if status == false {
+                                                                                    failureExpectation.fulfill()
+                                                                                }
+                                                                            }
+                                                                        }
+        }
+        if let engine = sensor2.dbEngine as? RealmEngine {
+            engine.removeAll(WiFiScanData.self)
+            for _ in 0..<100 {
+                engine.save(WiFiScanData())
+            }
+        }
+        sensor2.sync(force: true)
+        wait(for: [failureExpectation], timeout: 20)
+        NotificationCenter.default.removeObserver(failureObserver)
+        
+        #endif
+    }
 }
