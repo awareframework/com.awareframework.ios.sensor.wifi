@@ -220,6 +220,9 @@
 							com.apple.AccessWiFi = {
 								enabled = 1;
 							};
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
 						};
 					};
 					607FACE41AFB9204008FA782 = {
@@ -318,10 +321,8 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Networking/Networking.framework",
 				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -331,8 +332,6 @@
 				"${BUILT_PRODUCTS_DIR}/com.awareframework.ios.sensor.wifi/com_awareframework_ios_sensor_wifi.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Networking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
@@ -344,7 +343,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
