@@ -32,7 +32,7 @@ public protocol WiFiObserver{
 }
 
 public class WiFiSensor: AwareSensor {
-
+    
     public static let TAG = "Aware::WiFi"
     
     /**
@@ -100,12 +100,12 @@ public class WiFiSensor: AwareSensor {
     
     public var CONFIG = Config()
     
-    let reachability = Reachability()
+    let reachability = try! Reachability()
     
     var timer:Timer? = nil
     
     public class Config:SensorConfig{
-      
+        
         public var sensorObserver:WiFiObserver?
         
         // public var interval: Int = 1 // min
@@ -157,30 +157,28 @@ public class WiFiSensor: AwareSensor {
                 }
                 
                 
-                if let uwReachability = self.reachability{
-                    if uwReachability.connection == .wifi {
-                        let networkInfos = self.getNetworkInfos()
+                if self.reachability.connection == .wifi {
+                    let networkInfos = self.getNetworkInfos()
+                    
+                    for info in networkInfos{
+                        // send a WiFiScanData via observer
+                        let scanData = WiFiScanData.init()
+                        scanData.label = self.CONFIG.label
+                        scanData.ssid = info.ssid
+                        scanData.bssid = info.bssid
                         
-                        for info in networkInfos{
-                            // send a WiFiScanData via observer
-                            let scanData = WiFiScanData.init()
-                            scanData.label = self.CONFIG.label
-                            scanData.ssid = info.ssid
-                            scanData.bssid = info.bssid
-                            
-                            if let engine = self.dbEngine {
-                                engine.save(scanData)
-                            }
-                            if let wifiObserver = self.CONFIG.sensorObserver {
-                                wifiObserver.onWiFiAPDetected(data: scanData)
-                            }
-                            self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
-                                                         object: self,
-                                                         userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+                        if let engine = self.dbEngine {
+                            engine.save(scanData)
                         }
-                        
-                        
+                        if let wifiObserver = self.CONFIG.sensorObserver {
+                            wifiObserver.onWiFiAPDetected(data: scanData)
+                        }
+                        self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
+                                                     object: self,
+                                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
                     }
+                    
+                    
                 }
                 
                 
@@ -194,48 +192,47 @@ public class WiFiSensor: AwareSensor {
         }
         
         // start WiFi reachability/unreachable monitoring
-        if let uwReachability = reachability{
-            do{
-                // reachable events
-                uwReachability.whenReachable = { reachability in
-                    switch reachability.connection {
-                    case .wifi:
-                        let networkInfos = self.getNetworkInfos()
-                        for info in networkInfos{
-                            // send a WiFiScanData via observer
-                            let scanData = WiFiScanData.init()
-                            scanData.label = self.CONFIG.label
-                            scanData.ssid = info.ssid
-                            scanData.bssid = info.bssid
-                            if let observer = self.CONFIG.sensorObserver {
-                                observer.onWiFiAPDetected(data: scanData)
-                            }
-                            // save a WiFiDeviceData info to the local-storage
-                            if let engin = self.dbEngine {
-                                let deviceData = WiFiDeviceData()
-                                deviceData.label = self.CONFIG.label
-                                deviceData.bssid = scanData.bssid
-                                deviceData.ssid = scanData.ssid
-                                engin.save(deviceData)
-                                self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
-                                                             object: self,
-                                                             userInfo: [WiFiSensor.EXTRA_DATA: deviceData.toDictionary()])
-                            }
-                        }
-                        
-                        break
-                    case .cellular, .none:
+        do{
+            // reachable events
+            self.reachability.whenReachable = { reachability in
+                switch reachability.connection {
+                case .wifi:
+                    let networkInfos = self.getNetworkInfos()
+                    for info in networkInfos{
+                        // send a WiFiScanData via observer
+                        let scanData = WiFiScanData.init()
+                        scanData.label = self.CONFIG.label
+                        scanData.ssid = info.ssid
+                        scanData.bssid = info.bssid
                         if let observer = self.CONFIG.sensorObserver {
-                            observer.onWiFiDisabled()
+                            observer.onWiFiAPDetected(data: scanData)
                         }
-                        break
+                        // save a WiFiDeviceData info to the local-storage
+                        if let engin = self.dbEngine {
+                            let deviceData = WiFiDeviceData()
+                            deviceData.label = self.CONFIG.label
+                            deviceData.bssid = scanData.bssid
+                            deviceData.ssid = scanData.ssid
+                            engin.save(deviceData)
+                            self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
+                                                         object: self,
+                                                         userInfo: [WiFiSensor.EXTRA_DATA: deviceData.toDictionary()])
+                        }
                     }
+                    
+                    break
+                case .cellular, .none, .unavailable:
+                    if let observer = self.CONFIG.sensorObserver {
+                        observer.onWiFiDisabled()
+                    }
+                    break
                 }
-                try uwReachability.startNotifier()
-            } catch {
-                print("\(WiFiSensor.TAG)\(error)")
             }
+            try self.reachability.startNotifier()
+        } catch {
+            print("\(WiFiSensor.TAG)\(error)")
         }
+        
         
         self.notificationCenter.post(name: .actionAwareWiFiStart, object: self)
     }
@@ -247,9 +244,7 @@ public class WiFiSensor: AwareSensor {
             timer = nil
         }
         
-        if let uwReachability = reachability{
-            uwReachability.stopNotifier()
-        }
+        self.reachability.stopNotifier()
         
         self.notificationCenter.post(name: .actionAwareWiFiStop, object: self)
     }
