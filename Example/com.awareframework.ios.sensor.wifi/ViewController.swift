@@ -8,19 +8,31 @@
 
 import UIKit
 import com_awareframework_ios_sensor_wifi
+import CoreLocation
 
 class ViewController: UIViewController {
 
     var sensor:WiFiSensor?
     
+    private var locationManager = CLLocationManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if #available(iOS 13.0, *) {
+            self.locationManager.delegate = self
+            self.locationManager.requestWhenInUseAuthorization()
+        } else {
+//            print("ssid:\(self.ssid)")
+        }
+        
         // Do any additional setup after loading the view, typically from a nib.
-//        sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
-//            config.debug = true
-//            config.sensorObserver = Observer()
-//        })
-//        sensor?.start()
+        sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
+            config.debug = true
+            config.sensorObserver = Observer()
+            config.interval = 1
+        })
+        sensor?.start()
     }
 
     class Observer:WiFiObserver{
@@ -50,3 +62,8 @@ class ViewController: UIViewController {
 
 }
 
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+//        print("ssid:\(self.ssid)")
+    }
+}

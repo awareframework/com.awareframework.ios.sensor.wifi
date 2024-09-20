@@ -1,4 +1,5 @@
 use_frameworks!
+platform :ios, '13.0'
 
 target 'com.awareframework.ios.sensor.wifi_Example' do
   pod 'com.awareframework.ios.sensor.wifi', :path => '../'

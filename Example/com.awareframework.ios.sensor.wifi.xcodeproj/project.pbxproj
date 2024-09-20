@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2779EF3A266A6ADD31884B8E /* Pods_com_awareframework_ios_sensor_wifi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D28FC8AA6471B780346FE547 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */; };
-		2C0963596728C71E26632150 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAD22BFC3C5991BC6232F5AF /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		87ECA5BA30EA9348029450E1 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C2996AA9971F1FCD986D2A5 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */; };
+		C86D4E2063BF36150F32B579 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C85DD29DD1C045A16AD182A0 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +28,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		408E6061BD78A56101141E74 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Tests/Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		2DFF3F75BBD43FA3798B9F0C /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig"; path = "Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Tests/Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		307EC7653558E7EB1D50171A /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig"; path = "Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		3C2996AA9971F1FCD986D2A5 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_com_awareframework_ios_sensor_wifi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D8912B867EB2936080AB2E /* com.awareframework.ios.sensor.wifi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = com.awareframework.ios.sensor.wifi.podspec; path = ../com.awareframework.ios.sensor.wifi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		4BD6C4170F5B48299A51DD85 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		4F06610221A43A7300364018 /* com.awareframework.ios.sensor.wifi_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = com.awareframework.ios.sensor.wifi_Example.entitlements; sourceTree = "<group>"; };
@@ -43,11 +45,9 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		80B3D7267571D5438267BBCC /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		ACF1B6B912E5AE0136A00A54 /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig"; sourceTree = "<group>"; };
-		D28FC8AA6471B780346FE547 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_com_awareframework_ios_sensor_wifi_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2D1EF7783823C96B2E85324 /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		D8F8865A8148133CF4DC4BB6 /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Tests/Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		EAD22BFC3C5991BC6232F5AF /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_com_awareframework_ios_sensor_wifi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		81C7FC1E75C13C3CB6B46597 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig"; path = "Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Tests/Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		C75EAB048B8954B48979B7DF /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig"; path = "Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig"; sourceTree = "<group>"; };
+		C85DD29DD1C045A16AD182A0 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_com_awareframework_ios_sensor_wifi_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2779EF3A266A6ADD31884B8E /* Pods_com_awareframework_ios_sensor_wifi_Example.framework in Frameworks */,
+				C86D4E2063BF36150F32B579 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,22 +63,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C0963596728C71E26632150 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework in Frameworks */,
+				87ECA5BA30EA9348029450E1 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2A71A0F55614F815FCEB5027 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D28FC8AA6471B780346FE547 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */,
-				EAD22BFC3C5991BC6232F5AF /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -87,8 +78,8 @@
 				607FACD21AFB9204008FA782 /* Example for com.awareframework.ios.sensor.wifi */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
-				EAE245C704F4EFEBB16BA64D /* Pods */,
-				2A71A0F55614F815FCEB5027 /* Frameworks */,
+				E880B5B173DBB523604F56E7 /* Pods */,
+				BBBCAC0FC02EDA5D36C40242 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,15 +141,24 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		EAE245C704F4EFEBB16BA64D /* Pods */ = {
+		BBBCAC0FC02EDA5D36C40242 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D2D1EF7783823C96B2E85324 /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */,
-				ACF1B6B912E5AE0136A00A54 /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */,
-				408E6061BD78A56101141E74 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */,
-				D8F8865A8148133CF4DC4BB6 /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */,
+				C85DD29DD1C045A16AD182A0 /* Pods_com_awareframework_ios_sensor_wifi_Example.framework */,
+				3C2996AA9971F1FCD986D2A5 /* Pods_com_awareframework_ios_sensor_wifi_Tests.framework */,
 			);
-			name = Pods;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E880B5B173DBB523604F56E7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				307EC7653558E7EB1D50171A /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */,
+				C75EAB048B8954B48979B7DF /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */,
+				81C7FC1E75C13C3CB6B46597 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */,
+				2DFF3F75BBD43FA3798B9F0C /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,11 +168,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "com.awareframework.ios.sensor.wifi_Example" */;
 			buildPhases = (
-				70EA26072443BDFBDECDFEEA /* [CP] Check Pods Manifest.lock */,
+				05B05201E76B62957A2BA531 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				B3C78C927D83BCAF13C696E4 /* [CP] Embed Pods Frameworks */,
+				02CB73FB2FDD64F0ADC8B3B5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -187,7 +187,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "com.awareframework.ios.sensor.wifi_Tests" */;
 			buildPhases = (
-				1DC1CE0CBCC4B3A5C66DE9BB /* [CP] Check Pods Manifest.lock */,
+				3EE2AA0C85C6DDF44BECEE55 /* [CP] Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
@@ -224,6 +224,7 @@
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = FH352PYMNC;
 						LastSwiftMigration = 1010;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -234,6 +235,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -269,29 +271,35 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1DC1CE0CBCC4B3A5C66DE9BB /* [CP] Check Pods Manifest.lock */ = {
+		02CB73FB2FDD64F0ADC8B3B5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"${PODS_ROOT}/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Networking/Networking.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/com.awareframework.ios.sensor.core/com_awareframework_ios_sensor_core.framework",
+				"${BUILT_PRODUCTS_DIR}/com.awareframework.ios.sensor.wifi/com_awareframework_ios_sensor_wifi.framework",
 			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-com.awareframework.ios.sensor.wifi_Tests-checkManifestLockResult.txt",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Networking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/com_awareframework_ios_sensor_core.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/com_awareframework_ios_sensor_wifi.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		70EA26072443BDFBDECDFEEA /* [CP] Check Pods Manifest.lock */ = {
+		05B05201E76B62957A2BA531 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -313,7 +321,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B3C78C927D83BCAF13C696E4 /* [CP] Embed Pods Frameworks */ = {
+		3EE2AA0C85C6DDF44BECEE55 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -321,30 +329,18 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Networking/Networking.framework",
-				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/com.awareframework.ios.sensor.core/com_awareframework_ios_sensor_core.framework",
-				"${BUILT_PRODUCTS_DIR}/com.awareframework.ios.sensor.wifi/com_awareframework_ios_sensor_wifi.framework",
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Networking.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/com_awareframework_ios_sensor_core.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/com_awareframework_ios_sensor_wifi.framework",
+				"$(DERIVED_FILE_DIR)/Pods-com.awareframework.ios.sensor.wifi_Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-com.awareframework.ios.sensor.wifi_Example/Pods-com.awareframework.ios.sensor.wifi_Example-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -502,13 +498,13 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2D1EF7783823C96B2E85324 /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */;
+			baseConfigurationReference = 307EC7653558E7EB1D50171A /* Pods-com.awareframework.ios.sensor.wifi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = com.awareframework.ios.sensor.wifi_Example.entitlements;
 				DEVELOPMENT_TEAM = FH352PYMNC;
 				INFOPLIST_FILE = com.awareframework.ios.sensor.wifi/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -519,13 +515,13 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ACF1B6B912E5AE0136A00A54 /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */;
+			baseConfigurationReference = C75EAB048B8954B48979B7DF /* Pods-com.awareframework.ios.sensor.wifi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = com.awareframework.ios.sensor.wifi_Example.entitlements;
 				DEVELOPMENT_TEAM = FH352PYMNC;
 				INFOPLIST_FILE = com.awareframework.ios.sensor.wifi/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -536,14 +532,16 @@
 		};
 		607FACF31AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 408E6061BD78A56101141E74 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */;
+			baseConfigurationReference = 81C7FC1E75C13C3CB6B46597 /* Pods-com.awareframework.ios.sensor.wifi_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = FH352PYMNC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -554,10 +552,12 @@
 		};
 		607FACF41AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D8F8865A8148133CF4DC4BB6 /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */;
+			baseConfigurationReference = 2DFF3F75BBD43FA3798B9F0C /* Pods-com.awareframework.ios.sensor.wifi_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = FH352PYMNC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
