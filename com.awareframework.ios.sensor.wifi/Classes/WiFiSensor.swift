@@ -115,15 +115,7 @@ public class WiFiSensor: AwareSensor {
       
         public var sensorObserver:WiFiObserver?
         
-        // public var interval: Int = 1 // min
-        public var interval: Int = 1 {
-            didSet {
-                if self.interval < 1{
-                    print("[WiFi][Illegal Parameter] The interval value has to be greater than or equal to 1.")
-                    self.interval = 1
-                }
-            }
-        }
+        public var interval = 1.0;
         
         public override init() {
             super.init()
@@ -137,7 +129,7 @@ public class WiFiSensor: AwareSensor {
         
         public override func set(config: Dictionary<String, Any>) {
             super.set(config: config)
-            if let interval = config["interval"] as? Int {
+            if let interval = config["interval"] as? Double {
                 self.interval = interval
             }
         }
@@ -188,7 +180,7 @@ public class WiFiSensor: AwareSensor {
         
         
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: Double(CONFIG.interval)*60.0, repeats: true, block: { timer in
+            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.interval*60.0, repeats: true, block: { timer in
                 if self.isWifiConnected {
                     let networkInfos = self.getNetworkInfos()
                     for info in networkInfos{
