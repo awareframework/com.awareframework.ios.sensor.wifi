@@ -1,0 +1,42 @@
+{
+  "originHash" : "2535490744cd32f68b89b6521b44033fd7d47f40addc11535862abd96f6d9a1f",
+  "pins" : [
+    {
+      "identity" : "com.awareframework.ios.sensor.core",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:awareframework/com.awareframework.ios.sensor.core.git",
+      "state" : {
+        "revision" : "77f519945e3574c1d2da2ba80205064da49ef884",
+        "version" : "0.7.7"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
+        "version" : "20.1.0"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:realm/realm-swift.git",
+      "state" : {
+        "revision" : "bae6c4be7df169fdb047d0ad63f902c1e2665e83",
+        "version" : "20.0.1"
+      }
+    },
+    {
+      "identity" : "swiftyjson",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:SwiftyJSON/SwiftyJSON.git",
+      "state" : {
+        "revision" : "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
+        "version" : "5.0.2"
+      }
+    }
+  ],
+  "version" : 3
+}
