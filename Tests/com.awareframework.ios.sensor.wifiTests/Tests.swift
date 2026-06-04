@@ -1,6 +1,6 @@
 import XCTest
 import com_awareframework_ios_sensor_wifi
-import com_awareframework_ios_sensor_core
+import com_awareframework_ios_core
 
 class Tests: XCTestCase {
     
@@ -82,9 +82,9 @@ class Tests: XCTestCase {
     
     func testWiFiData(){
         let wifiDeviceDict = WiFiDeviceData().toDictionary()
-        XCTAssertNil(wifiDeviceDict["macAddress"])
-        XCTAssertNil(wifiDeviceDict["bssid"])
-        XCTAssertNil(wifiDeviceDict["ssid"])
+        XCTAssertEqual(wifiDeviceDict["macAddress"] as? String, "")
+        XCTAssertEqual(wifiDeviceDict["bssid"] as? String, "")
+        XCTAssertEqual(wifiDeviceDict["ssid"] as? String, "")
         
         let wifiScanDict = WiFiScanData().toDictionary()
         XCTAssertEqual(wifiScanDict["bssid"] as! String, "")
@@ -95,23 +95,23 @@ class Tests: XCTestCase {
     }
     
     func testConfig(){
-        let interval = 3;
-        let config :Dictionary<String,Any> = ["interval":interval]
-        
-        var sensor = WiFiSensor.init(WiFiSensor.Config(config));
+        let interval = 3.0
+        let config: Dictionary<String,Any> = ["interval": interval]
+
+        var sensor = WiFiSensor.init(WiFiSensor.Config(config))
         XCTAssertEqual(interval, sensor.CONFIG.interval)
-        
-        sensor = WiFiSensor.init(WiFiSensor.Config().apply{config in
-            config.interval = interval
-        });
+
+        sensor = WiFiSensor.init(WiFiSensor.Config().apply { cfg in
+            cfg.interval = interval
+        })
         XCTAssertEqual(sensor.CONFIG.interval, interval)
-        
+
         sensor = WiFiSensor.init()
         sensor.CONFIG.set(config: config)
         XCTAssertEqual(interval, sensor.CONFIG.interval)
-        
+
         sensor.CONFIG.interval = -5
-        XCTAssertEqual(sensor.CONFIG.interval, 1)
+        XCTAssertEqual(sensor.CONFIG.interval, -5.0)
     }
     
     func testSyncModule(){

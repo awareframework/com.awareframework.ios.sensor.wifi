@@ -1,37 +1,37 @@
 {
-  "originHash" : "2535490744cd32f68b89b6521b44033fd7d47f40addc11535862abd96f6d9a1f",
+  "originHash" : "65133063cff29c4fcc318bb0615ad006ea2c881d15ff1e8e622649a6c55b404f",
   "pins" : [
     {
-      "identity" : "com.awareframework.ios.sensor.core",
+      "identity" : "com.awareframework.ios.core",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:awareframework/com.awareframework.ios.sensor.core.git",
+      "location" : "https://github.com/awareframework/com.awareframework.ios.core.git",
       "state" : {
-        "revision" : "77f519945e3574c1d2da2ba80205064da49ef884",
-        "version" : "0.7.7"
+        "revision" : "7d0c08213468420d623c2e2e6879e155d7e378d2",
+        "version" : "1.1.0"
       }
     },
     {
-      "identity" : "realm-core",
+      "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-core.git",
+      "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
-        "version" : "20.1.0"
+        "revision" : "52b7b7bd26821c67f1c26b5e248fd6bcac4903a7",
+        "version" : "7.4.0"
       }
     },
     {
-      "identity" : "realm-swift",
+      "identity" : "reachability.swift",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:realm/realm-swift.git",
+      "location" : "https://github.com/ashleymills/Reachability.swift.git",
       "state" : {
-        "revision" : "bae6c4be7df169fdb047d0ad63f902c1e2665e83",
-        "version" : "20.0.1"
+        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
+        "version" : "5.2.4"
       }
     },
     {
       "identity" : "swiftyjson",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:SwiftyJSON/SwiftyJSON.git",
+      "location" : "https://github.com/SwiftyJSON/SwiftyJSON.git",
       "state" : {
         "revision" : "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
         "version" : "5.0.2"

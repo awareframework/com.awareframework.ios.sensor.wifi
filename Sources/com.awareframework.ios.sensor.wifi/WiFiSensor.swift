@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import com_awareframework_ios_sensor_core
+import com_awareframework_ios_core
 import NetworkExtension
 import SystemConfiguration.CaptiveNetwork
 import Network
@@ -185,12 +185,12 @@ public class WiFiSensor: AwareSensor {
                     let networkInfos = self.getNetworkInfos()
                     for info in networkInfos{
                         // send a WiFiScanData via observer
-                        let scanData = WiFiScanData.init()
+                        var scanData = WiFiScanData.init()
                         scanData.label = self.CONFIG.label
                         scanData.ssid = info.ssid
                         scanData.bssid = info.bssid
                         if let engine = self.dbEngine {
-                            engine.save(scanData)
+                            engine.save([scanData])
                         }
                         if let wifiObserver = self.CONFIG.sensorObserver {
                             wifiObserver.onWiFiAPDetected(data: scanData)
@@ -229,10 +229,10 @@ public class WiFiSensor: AwareSensor {
                 setting.dispatchQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.sync.queue")
             }
             
-            engine.startSync(WiFiDeviceData.TABLE_NAME, WiFiDeviceData.self, config.apply(){ setting in
+            engine.startSync(config.apply(){ setting in
                 setting.completionHandler = { (status, error) in
                     var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS :status,
-                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.TABLE_NAME,
+                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
                                                             WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
                     if let e = error {
                         userInfo[WiFiSensor.EXTRA_ERROR] = e
@@ -243,10 +243,10 @@ public class WiFiSensor: AwareSensor {
                 }
             })
             
-            engine.startSync(WiFiScanData.TABLE_NAME, WiFiScanData.self, config.apply(){ setting in
+            engine.startSync(config.apply(){ setting in
                 setting.completionHandler = { (status, error) in
                     var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS :status,
-                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.TABLE_NAME,
+                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
                                                             WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
                     if let e = error {
                         userInfo[WiFiSensor.EXTRA_ERROR] = e
