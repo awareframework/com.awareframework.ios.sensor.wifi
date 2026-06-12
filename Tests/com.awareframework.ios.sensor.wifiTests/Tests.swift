@@ -3,24 +3,21 @@ import com_awareframework_ios_sensor_wifi
 import com_awareframework_ios_core
 
 class Tests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     func testControllers(){
-        
+
         let sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
             config.debug = true
-            // config.dbType = .REALM
         })
-        
+
         /// test set label action ///
         let expectSetLabel = expectation(description: "set label")
         let newLabel = "hello"
@@ -36,7 +33,7 @@ class Tests: XCTestCase {
         sensor.set(label:newLabel)
         wait(for: [expectSetLabel], timeout: 5)
         NotificationCenter.default.removeObserver(labelObserver)
-        
+
         /// test sync action ////
         let expectSync = expectation(description: "sync")
         let syncObserver = NotificationCenter.default.addObserver(forName: Notification.Name.actionAwareWiFiSync , object: nil, queue: .main) { (notification) in
@@ -46,14 +43,14 @@ class Tests: XCTestCase {
         sensor.sync()
         wait(for: [expectSync], timeout: 5)
         NotificationCenter.default.removeObserver(syncObserver)
-        
-        
+
+
 //        #if targetEnvironment(simulator)
 //
 //        print("Controller tests (start and stop) require a real device.")
 //
 //        #else
-        
+
         //// test start action ////
         let expectStart = expectation(description: "start")
         let observer = NotificationCenter.default.addObserver(forName: .actionAwareWiFiStart,
@@ -65,8 +62,8 @@ class Tests: XCTestCase {
         sensor.start()
         wait(for: [expectStart], timeout: 5)
         NotificationCenter.default.removeObserver(observer)
-        
-        
+
+
         /// test stop action ////
         let expectStop = expectation(description: "stop")
         let stopObserver = NotificationCenter.default.addObserver(forName: .actionAwareWiFiStop, object: nil, queue: .main) { (notification) in
@@ -76,16 +73,16 @@ class Tests: XCTestCase {
         sensor.stop()
         wait(for: [expectStop], timeout: 5)
         NotificationCenter.default.removeObserver(stopObserver)
-        
+
 //        #endif
     }
-    
+
     func testWiFiData(){
         let wifiDeviceDict = WiFiDeviceData().toDictionary()
         XCTAssertEqual(wifiDeviceDict["macAddress"] as? String, "")
         XCTAssertEqual(wifiDeviceDict["bssid"] as? String, "")
         XCTAssertEqual(wifiDeviceDict["ssid"] as? String, "")
-        
+
         let wifiScanDict = WiFiScanData().toDictionary()
         XCTAssertEqual(wifiScanDict["bssid"] as! String, "")
         XCTAssertEqual(wifiScanDict["ssid"] as! String, "")
@@ -93,7 +90,7 @@ class Tests: XCTestCase {
         XCTAssertEqual(wifiScanDict["frequency"] as! Int, 0)
         XCTAssertEqual(wifiScanDict["rssi"] as! Int, 0)
     }
-    
+
     func testConfig(){
         let interval = 3.0
         let config: Dictionary<String,Any> = ["interval": interval]
@@ -113,26 +110,19 @@ class Tests: XCTestCase {
         sensor.CONFIG.interval = -5
         XCTAssertEqual(sensor.CONFIG.interval, -5.0)
     }
-    
+
     func testSyncModule(){
         #if targetEnvironment(simulator)
-        
+
         print("This test requires a real WiFi.")
-        
+
         #else
         // success //
         let sensor = WiFiSensor.init(WiFiSensor.Config().apply{ config in
             config.debug = true
-            config.dbType = .REALM
             config.dbHost = "node.awareframework.com:1001"
             config.dbPath = "sync_db"
         })
-        if let engine = sensor.dbEngine as? RealmEngine {
-            engine.removeAll(WiFiScanData.self)
-            for _ in 0..<100 {
-                engine.save(WiFiScanData())
-            }
-        }
         let successExpectation = XCTestExpectation(description: "success sync")
         let observer = NotificationCenter.default.addObserver(forName: Notification.Name.actionAwareWiFiSyncCompletion,
                                                               object: sensor, queue: .main) { (notification) in
@@ -147,13 +137,12 @@ class Tests: XCTestCase {
         sensor.sync(force: true)
         wait(for: [successExpectation], timeout: 20)
         NotificationCenter.default.removeObserver(observer)
-        
+
         ////////////////////////////////////
-        
+
         // failure //
         let sensor2 = WiFiSensor.init(WiFiSensor.Config().apply{ config in
             config.debug = true
-            config.dbType = .REALM
             config.dbHost = "node.awareframework.com.com" // wrong url
             config.dbPath = "sync_db"
         })
@@ -168,16 +157,10 @@ class Tests: XCTestCase {
                                                                             }
                                                                         }
         }
-        if let engine = sensor2.dbEngine as? RealmEngine {
-            engine.removeAll(WiFiScanData.self)
-            for _ in 0..<100 {
-                engine.save(WiFiScanData())
-            }
-        }
         sensor2.sync(force: true)
         wait(for: [failureExpectation], timeout: 20)
         NotificationCenter.default.removeObserver(failureObserver)
-        
+
         #endif
     }
 }

@@ -10,7 +10,7 @@ public struct WiFiScanData: BaseDbModelSQLite {
     public var timezone: Int = AwareUtils.getTimeZone()
     public var os: String = "iOS"
     public var jsonVersion: Int = 1
-    public static let databaseTableName = "wifiScanData"
+    public static let databaseTableName = "ios_wifi_scan"
 
     public var bssid: String = ""
     public var ssid: String = ""

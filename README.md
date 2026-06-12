@@ -59,22 +59,41 @@ Class to hold the configuration of the sensor.
 
 ### WiFi Scan Data
 
-| Field     | Type   | Description                                                     |
-| --------- | ------ | --------------------------------------------------------------- |
-| bssid     | String | currently connected access point MAC address                    |
-| ssid      | String | currently connected access point network name                   |
-| deviceId  | String | AWARE device UUID                                               |
-| label     | String | Customizable label. Useful for data calibration or traceability |
-| timestamp | Long   | Unixtime milliseconds since 1970                                |
-| timezone  | Int    | WiFi of the device                                              |
-| os        | String | Operating system of the device (ex. android)                    |
+| Field       | Type   | Description                                                     |
+| ----------- | ------ | --------------------------------------------------------------- |
+| bssid       | String | access point BSSID (MAC address)                                |
+| ssid        | String | access point network name                                       |
+| security    | String | security mode of the access point                               |
+| frequency   | Int    | frequency of the access point (MHz)                             |
+| rssi        | Int    | received signal strength in dBm                                 |
+| deviceId    | String | AWARE device UUID                                               |
+| label       | String | Customizable label. Useful for data calibration or traceability |
+| timestamp   | Int64  | Unixtime milliseconds since 1970                                |
+| timezone    | Int    | Timezone of the device                                          |
+| os          | String | Operating system of the device (ex. ios)                        |
+| jsonVersion | Int    | JSON schema version                                             |
+
+### WiFi Device Data
+
+Contains the current device's own WiFi connection info.
+
+| Field       | Type   | Description                                                     |
+| ----------- | ------ | --------------------------------------------------------------- |
+| macAddress  | String | MAC address of the device's WiFi interface                      |
+| bssid       | String | BSSID of the connected access point                             |
+| ssid        | String | SSID of the connected access point                              |
+| deviceId    | String | AWARE device UUID                                               |
+| label       | String | Customizable label. Useful for data calibration or traceability |
+| timestamp   | Int64  | Unixtime milliseconds since 1970                                |
+| timezone    | Int    | Timezone of the device                                          |
+| os          | String | Operating system of the device (ex. ios)                        |
+| jsonVersion | Int    | JSON schema version                                             |
 
 ## Example usage
 
 ```swift
 let wifiSensor = WiFiSensor.init(WifiSensor.Config().apply{config in
     config.sensorObserver = Observer()
-    config.dbType = .REALM
     config.debug = true
     // more configuration ...
 })

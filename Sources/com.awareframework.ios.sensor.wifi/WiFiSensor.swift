@@ -143,6 +143,9 @@ public class WiFiSensor: AwareSensor {
         super.init()
         CONFIG = config
         initializeDbEngine(config: config)
+        super.syncConfig = DbSyncConfig().apply { c in
+            c.dispatchQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.sync.queue")
+        }
     }
     
     public override func start() {
@@ -223,41 +226,26 @@ public class WiFiSensor: AwareSensor {
     
     
     public override func sync(force: Bool = false) {
-        if let engine = self.dbEngine {
-            let config = DbSyncConfig.init().apply{ setting in
-                setting.debug = self.CONFIG.debug
-                setting.dispatchQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.sync.queue")
+        guard let engine = self.dbEngine, let syncConfig = self.syncConfig else { return }
+        syncConfig.debug = self.CONFIG.debug
+        engine.startSync(syncConfig.apply { setting in
+            setting.completionHandler = { (status, error) in
+                var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS: status,
+                                                        WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
+                                                        WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
+                if let e = error { userInfo[WiFiSensor.EXTRA_ERROR] = e }
+                self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion, object: self, userInfo: userInfo)
             }
-            
-            engine.startSync(config.apply(){ setting in
-                setting.completionHandler = { (status, error) in
-                    var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS :status,
-                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
-                                                            WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
-                    if let e = error {
-                        userInfo[WiFiSensor.EXTRA_ERROR] = e
-                    }
-                    self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion,
-                                                 object: self,
-                                                 userInfo:userInfo)
-                }
-            })
-            
-            engine.startSync(config.apply(){ setting in
-                setting.completionHandler = { (status, error) in
-                    var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS :status,
-                                                            WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
-                                                            WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
-                    if let e = error {
-                        userInfo[WiFiSensor.EXTRA_ERROR] = e
-                    }
-                    self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion,
-                                                 object: self,
-                                                 userInfo:userInfo)
-                }
-            })
-            
-        }
+        })
+        engine.startSync(syncConfig.apply { setting in
+            setting.completionHandler = { (status, error) in
+                var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS: status,
+                                                        WiFiSensor.EXTRA_TABLE_NAME: WiFiScanData.databaseTableName,
+                                                        WiFiSensor.EXTRA_OBJECT_TYPE: WiFiScanData.self]
+                if let e = error { userInfo[WiFiSensor.EXTRA_ERROR] = e }
+                self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion, object: self, userInfo: userInfo)
+            }
+        })
         self.notificationCenter.post(name: .actionAwareWiFiSync, object: self)
     }
     
