@@ -1,13 +1,13 @@
 {
-  "originHash" : "65133063cff29c4fcc318bb0615ad006ea2c881d15ff1e8e622649a6c55b404f",
+  "originHash" : "50ee0c90764906a164f3006a048310a3136868bfde19e9500eb06079f42cd426",
   "pins" : [
     {
       "identity" : "com.awareframework.ios.core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/awareframework/com.awareframework.ios.core.git",
       "state" : {
-        "revision" : "93c83c2c037ab9992d94ee41f1c82aa20364dfcf",
-        "version" : "1.1.0"
+        "revision" : "5469ca3bc51bf850a141ed1dbb1e220984dafcb7",
+        "version" : "1.3.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "52b7b7bd26821c67f1c26b5e248fd6bcac4903a7",
-        "version" : "7.4.0"
+        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
+        "version" : "7.11.0"
       }
     },
     {
