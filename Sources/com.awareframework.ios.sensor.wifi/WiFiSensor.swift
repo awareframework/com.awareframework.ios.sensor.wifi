@@ -100,9 +100,9 @@ public class WiFiSensor: AwareSensor {
     
     public var CONFIG = Config()
     
-    private let networkMonitor = NWPathMonitor()
-    private let wifiMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
-    private let cellularMonitor = NWPathMonitor(requiredInterfaceType: .cellular)
+    private var networkMonitor = NWPathMonitor()
+    private var wifiMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
+    private var cellularMonitor = NWPathMonitor(requiredInterfaceType: .cellular)
     private let queue = DispatchQueue.global(qos: .background)
     // 現在のネットワーク状態
     var isConnected: Bool = false
@@ -149,7 +149,11 @@ public class WiFiSensor: AwareSensor {
     }
     
     public override func start() {
-        
+        // NWPathMonitor cannot be reused after cancel(), so create fresh instances each time
+        networkMonitor = NWPathMonitor()
+        wifiMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
+        cellularMonitor = NWPathMonitor(requiredInterfaceType: .cellular)
+
         networkMonitor.pathUpdateHandler = { path in
             if path.status == .satisfied {
                 self.isConnected = true
@@ -183,26 +187,19 @@ public class WiFiSensor: AwareSensor {
         
         
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.interval*60.0, repeats: true, block: { timer in
-                if self.isWifiConnected {
-                    let networkInfos = self.getNetworkInfos()
-                    for info in networkInfos{
-                        // send a WiFiScanData via observer
-                        var scanData = WiFiScanData.init()
-                        scanData.label = self.CONFIG.label
-                        scanData.ssid = info.ssid
-                        scanData.bssid = info.bssid
-                        if let engine = self.dbEngine {
-                            engine.save([scanData])
-                        }
-                        if let wifiObserver = self.CONFIG.sensorObserver {
-                            wifiObserver.onWiFiAPDetected(data: scanData)
-                        }
-                        self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
-                                                     object: self,
-                                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+            let scanBlock = { [weak self] in
+                guard let self = self, self.isWifiConnected else { return }
+                self.getNetworkInfos { [weak self] networkInfos in
+                    guard let self = self else { return }
+                    for info in networkInfos {
+                        self.saveNetworkInfo(info)
                     }
                 }
+            }
+            // Scan immediately on start, then on each interval
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { scanBlock() }
+            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.interval*60.0, repeats: true, block: { _ in
+                scanBlock()
             })
         }
         
@@ -255,14 +252,57 @@ public class WiFiSensor: AwareSensor {
         public let interface:String
         public let ssid:String
         public let bssid:String
-        init(_ interface:String, _ ssid:String,_ bssid:String) {
+        public let security:String
+        init(_ interface:String, _ ssid:String, _ bssid:String, _ security:String = "") {
             self.interface = interface
             self.ssid = ssid
             self.bssid = bssid
+            self.security = security
         }
     }
     
-    func getNetworkInfos() -> Array<NetworkInfo> {
+    private func saveNetworkInfo(_ info: NetworkInfo) {
+        var scanData = WiFiScanData.init()
+        scanData.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        scanData.label = self.CONFIG.label
+        scanData.ssid = info.ssid
+        scanData.bssid = info.bssid
+        scanData.security = info.security
+        if let engine = self.dbEngine {
+            engine.save([scanData])
+        }
+        if let wifiObserver = self.CONFIG.sensorObserver {
+            wifiObserver.onWiFiAPDetected(data: scanData)
+        }
+        self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
+                                     object: self,
+                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+        self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
+                                     object: self,
+                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+    }
+
+    func getNetworkInfos(completion: @escaping ([NetworkInfo]) -> Void) {
+        if #available(iOS 14.0, *) {
+            NEHotspotNetwork.fetchCurrent { network in
+                guard let network = network else {
+                    completion([])
+                    return
+                }
+                let security: String
+                if #available(iOS 15.0, *) {
+                    security = self.securityTypeLabel(network.securityType)
+                } else {
+                    security = ""
+                }
+                completion([NetworkInfo("en0", network.ssid, network.bssid, security)])
+            }
+            return
+        }
+        completion(getLegacyNetworkInfos())
+    }
+
+    private func getLegacyNetworkInfos() -> Array<NetworkInfo> {
         // https://forums.developer.apple.com/thread/50302
         guard let interfaceNames = CNCopySupportedInterfaces() as? [String] else {
             return []
@@ -281,10 +321,27 @@ public class WiFiSensor: AwareSensor {
         }
         return networkInfos
     }
+
+    @available(iOS 15.0, *)
+    private func securityTypeLabel(_ securityType: NEHotspotNetworkSecurityType) -> String {
+        switch securityType {
+        case .open:
+            return "open"
+        case .WEP:
+            return "wep"
+        case .personal:
+            return "personal"
+        case .enterprise:
+            return "enterprise"
+        case .unknown:
+            return "unknown"
+        @unknown default:
+            return "unknown"
+        }
+    }
     
     public override func set(label:String){
         self.CONFIG.label = label
         self.notificationCenter.post(name: .actionAwareWiFiSetLabel, object: self, userInfo: [WiFiSensor.EXTRA_LABEL:label])
     }
 }
-
