@@ -1,0 +1,178 @@
+name: Sensor CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    # Every Monday at 02:00 UTC
+    - cron: '0 2 * * 1'
+
+jobs:
+  test:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode and simulator info
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun simctl list runtimes
+          xcrun simctl list devices available
+
+      - name: Resolve package dependencies
+        run: swift package resolve
+
+      - name: Detect scheme and simulator
+        run: |
+          SCHEME=$(swift package dump-package | python3 -c "import json,sys; print(json.load(sys.stdin)['name'])")
+          echo "SCHEME=$SCHEME" >> "$GITHUB_ENV"
+
+          # Find the latest available iPhone simulator name (name-based, more robust than UDID)
+          SIM_NAME=$(xcrun simctl list devices available --json | python3 -c "
+          import json, sys
+          devs = json.load(sys.stdin)['devices']
+          iphones = [
+              (rt, d['name'])
+              for rt, dl in devs.items()
+              for d in dl
+              if 'iOS' in rt and 'iPhone' in d['name'] and d.get('isAvailable', True)
+          ]
+          iphones.sort(reverse=True)
+          print(iphones[0][1] if iphones else 'iPhone 16')
+          ")
+          echo "SIM_NAME=$SIM_NAME" >> "$GITHUB_ENV"
+          echo "Detected scheme: $SCHEME"
+          echo "Detected simulator: $SIM_NAME"
+
+      - name: Build
+        id: build
+        run: |
+          xcodebuild build \
+            -scheme "$SCHEME" \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            -sdk iphonesimulator \
+            2>&1 | tee build_output.txt; exit "${PIPESTATUS[0]}"
+        continue-on-error: true
+
+      - name: Test
+        id: test
+        if: steps.build.outcome == 'success'
+        run: |
+          xcodebuild test \
+            -scheme "$SCHEME" \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -enableCodeCoverage YES \
+            2>&1 | tee test_output.txt; exit "${PIPESTATUS[0]}"
+        continue-on-error: true
+
+      - name: Create or update issue on failure
+        if: steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const failed = '${{ steps.build.outcome }}' === 'failure' ? 'build' : 'test';
+            const logFile = failed === 'build' ? 'build_output.txt' : 'test_output.txt';
+
+            let raw = '';
+            try { raw = fs.readFileSync(logFile, 'utf8'); } catch (_) {}
+
+            const errors = raw.split('\n')
+              .filter(l => /error:|FAILED|\*\* BUILD FAILED/.test(l))
+              .slice(0, 60)
+              .join('\n');
+
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = `[CI] ${failed} failure detected`;
+            const body = [
+              `## :x: Automated CI ${failed} failure`,
+              '',
+              `| | |`,
+              `|---|---|`,
+              `| **Workflow run** | [View logs](${runUrl}) |`,
+              `| **Trigger** | \`${context.eventName}\` |`,
+              `| **Ref** | \`${context.ref}\` |`,
+              `| **Commit** | \`${context.sha.slice(0,7)}\` |`,
+              '',
+              `## Error summary`,
+              '```',
+              errors || '(no error lines captured — see full logs above)',
+              '```',
+            ].join('\n');
+
+            // Ensure ci-failure label exists
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'ci-failure',
+                color: 'd73a4a',
+                description: 'Automated CI test failure',
+              });
+            } catch (_) { /* label already exists */ }
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'ci-failure',
+            });
+
+            if (issues.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues[0].number,
+                body: `### :warning: New failure (${new Date().toISOString().split('T')[0]})\n\n${body}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['ci-failure'],
+              });
+            }
+
+      - name: Close ci-failure issue on success
+        if: steps.build.outcome == 'success' && steps.test.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'ci-failure',
+            });
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `:white_check_mark: All tests are passing again. See [run ${context.runId}](${runUrl}).`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+
+      - name: Fail job if build or tests failed
+        if: steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
+        run: |
+          echo "Build outcome: ${{ steps.build.outcome }}"
+          echo "Test outcome:  ${{ steps.test.outcome }}"
+          exit 1
