@@ -115,7 +115,7 @@ public class WiFiSensor: AwareSensor {
       
         public var sensorObserver:WiFiObserver?
         
-        public var interval = 1.0;
+        public var scanIntervalSeconds = 60.0
         
         public override init() {
             super.init()
@@ -129,8 +129,8 @@ public class WiFiSensor: AwareSensor {
         
         public override func set(config: Dictionary<String, Any>) {
             super.set(config: config)
-            if let interval = config["interval"] as? Double {
-                self.interval = interval
+            if let scanIntervalSeconds = config["scanIntervalSeconds"] as? Double {
+                self.scanIntervalSeconds = scanIntervalSeconds
             }
         }
     }
@@ -198,7 +198,7 @@ public class WiFiSensor: AwareSensor {
             }
             // Scan immediately on start, then on each interval
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { scanBlock() }
-            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.interval*60.0, repeats: true, block: { _ in
+            timer = Timer.scheduledTimer(withTimeInterval: CONFIG.scanIntervalSeconds, repeats: true, block: { _ in
                 scanBlock()
             })
         }

@@ -14,7 +14,7 @@ You can integrate this framework into your project via Swift Package Manager (Sw
 
 ### SwiftPM
 1. Open Package Manager Windows
-    * Open `Xcode` -> Select `Menu Bar` -> `File` -> `App Package Dependencies...` 
+    * Open `Xcode` -> Select `Menu Bar` -> `File` -> `App Package Dependencies...`
 
 2. Find the package using the manager
     * Select `Search Package URL` and type `git@github.com:awareframework/com.awareframework.ios.sensor.wifi.git`
@@ -23,13 +23,13 @@ You can integrate this framework into your project via Swift Package Manager (Sw
 
 4. Turn ON `Access WiFi Information` capability on the Xcode project
 
-## Public functions
+## Public Functions
 
 ### WifiSensor
 
-* `init(config:WiFiSensor.Config?)` : Initializes the WiFi sensor with the optional configuration.
-* `start()`: Starts the WiFi sensor with the optional configuration.
-* `stop()`: Stops the service.
++ `init(config:WiFiSensor.Config?)`: Initializes the WiFi sensor with the optional configuration.
++ `start()`: Starts the WiFi sensor with the optional configuration.
++ `stop()`: Stops the service.
 
 
 ### WifiSensor.Config
@@ -39,21 +39,22 @@ Class to hold the configuration of the sensor.
 #### Fields
 
 + `sensorObserver: WiFiObserver`: Callback for live data updates.
-+ `enabled: Boolean` Sensor is enabled or not. (default = `false`)
-+ `debug: Boolean` enable/disable logging to `Logcat`. (default = `false`)
-+ `label: String` Label for the data. (default = "")
-+ `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
-+ `dbEncryptionKey` Encryption key for the database. (default = `null`)
-+ `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
-+ `dbPath: String` Path of the database. (default = "aware_wifi")
-+ `dbHost: String` Host for syncing the database. (default = `null`)
++ `scanIntervalSeconds: Double`: Wi-Fi scan interval in seconds. (default = `60`)
++ `enabled: Bool`: Sensor is enabled or not. (default = `false`)
++ `debug: Bool`: Enable/disable logging. (default = `false`)
++ `label: String`: Label for the data. (default = `""`)
++ `deviceId: String`: Id of the device that will be associated with the events and the sensor. (default = `""`)
++ `dbEncryptionKey: String?`: Encryption key for the database. (default = `nil`)
++ `dbType: DatabaseType`: Which db engine to use for saving data. (default = `.none`)
++ `dbPath: String`: Path of the database. (default = `"aware_wifi"`)
++ `dbHost: String?`: Host for syncing the database. (default = `nil`)
 
 ## Broadcasts
 
-+ `WiFiSensor.ACTION_AWARE_WIFI_CURRENT_AP` currently connected to this AP. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
-+ `WiFiSensor.ACTION_AWARE_WIFI_NEW_DEVICE` new WiFi AP device detected. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
-+ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_STARTED` WiFi scan started
-+ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_ENDED` WiFi scan ended.
++ `WiFiSensor.ACTION_AWARE_WIFI_CURRENT_AP`: currently connected to this AP. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_NEW_DEVICE`: new WiFi AP device detected. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_STARTED`: WiFi scan started
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_ENDED`: WiFi scan ended.
 
 ## Data Representations
 
@@ -89,11 +90,12 @@ Contains the current device's own WiFi connection info.
 | os          | String | Operating system of the device (ex. ios)                        |
 | jsonVersion | Int    | JSON schema version                                             |
 
-## Example usage
+## Example Usage
 
 ```swift
-let wifiSensor = WiFiSensor.init(WifiSensor.Config().apply{config in
+let wifiSensor = WiFiSensor.init(WifiSensor.Config().apply { config in
     config.sensorObserver = Observer()
+    config.scanIntervalSeconds = 60
     config.debug = true
     // more configuration ...
 })

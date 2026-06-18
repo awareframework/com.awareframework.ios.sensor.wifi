@@ -92,23 +92,23 @@ class Tests: XCTestCase {
     }
 
     func testConfig(){
-        let interval = 3.0
-        let config: Dictionary<String,Any> = ["interval": interval]
+        let scanIntervalSeconds = 3.0
+        let config: Dictionary<String,Any> = ["scanIntervalSeconds": scanIntervalSeconds]
 
         var sensor = WiFiSensor.init(WiFiSensor.Config(config))
-        XCTAssertEqual(interval, sensor.CONFIG.interval)
+        XCTAssertEqual(scanIntervalSeconds, sensor.CONFIG.scanIntervalSeconds)
 
         sensor = WiFiSensor.init(WiFiSensor.Config().apply { cfg in
-            cfg.interval = interval
+            cfg.scanIntervalSeconds = scanIntervalSeconds
         })
-        XCTAssertEqual(sensor.CONFIG.interval, interval)
+        XCTAssertEqual(sensor.CONFIG.scanIntervalSeconds, scanIntervalSeconds)
 
         sensor = WiFiSensor.init()
         sensor.CONFIG.set(config: config)
-        XCTAssertEqual(interval, sensor.CONFIG.interval)
+        XCTAssertEqual(scanIntervalSeconds, sensor.CONFIG.scanIntervalSeconds)
 
-        sensor.CONFIG.interval = -5
-        XCTAssertEqual(sensor.CONFIG.interval, -5.0)
+        sensor.CONFIG.scanIntervalSeconds = -5
+        XCTAssertEqual(sensor.CONFIG.scanIntervalSeconds, -5.0)
     }
 
     func testSyncModule(){
