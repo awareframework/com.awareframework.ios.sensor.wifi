@@ -73,102 +73,69 @@ jobs:
 
       - name: Create or update issue on failure
         if: steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const failed = '${{ steps.build.outcome }}' === 'failure' ? 'build' : 'test';
-            const logFile = failed === 'build' ? 'build_output.txt' : 'test_output.txt';
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.build.outcome }}" = "failure" ]; then
+            FAILED="build"
+            LOG_FILE="build_output.txt"
+          else
+            FAILED="test"
+            LOG_FILE="test_output.txt"
+          fi
 
-            let raw = '';
-            try { raw = fs.readFileSync(logFile, 'utf8'); } catch (_) {}
+          ERRORS=$(grep -E 'error:|FAILED|\*\* BUILD FAILED' "$LOG_FILE" 2>/dev/null | head -60 || true)
+          [ -z "$ERRORS" ] && ERRORS="(no error lines captured — see full logs above)"
 
-            const errors = raw.split('\n')
-              .filter(l => /error:|FAILED|\*\* BUILD FAILED/.test(l))
-              .slice(0, 60)
-              .join('\n');
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TODAY=$(date -u +%Y-%m-%d)
 
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const title = `[CI] ${failed} failure detected`;
-            const body = [
-              `## :x: Automated CI ${failed} failure`,
-              '',
-              `| | |`,
-              `|---|---|`,
-              `| **Workflow run** | [View logs](${runUrl}) |`,
-              `| **Trigger** | \`${context.eventName}\` |`,
-              `| **Ref** | \`${context.ref}\` |`,
-              `| **Commit** | \`${context.sha.slice(0,7)}\` |`,
-              '',
-              `## Error summary`,
-              '```',
-              errors || '(no error lines captured — see full logs above)',
-              '```',
-            ].join('\n');
+          BODY="## :x: Automated CI ${FAILED} failure
 
-            // Ensure ci-failure label exists
-            try {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: 'ci-failure',
-                color: 'd73a4a',
-                description: 'Automated CI test failure',
-              });
-            } catch (_) { /* label already exists */ }
+          | | |
+          |---|---|
+          | **Workflow run** | [View logs](${RUN_URL}) |
+          | **Trigger** | \`${{ github.event_name }}\` |
+          | **Ref** | \`${{ github.ref }}\` |
+          | **Commit** | \`${SHORT_SHA}\` |
 
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'ci-failure',
-            });
+          ## Error summary
+          \`\`\`
+          ${ERRORS}
+          \`\`\`"
 
-            if (issues.length > 0) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issues[0].number,
-                body: `### :warning: New failure (${new Date().toISOString().split('T')[0]})\n\n${body}`,
-              });
-            } else {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-                labels: ['ci-failure'],
-              });
-            }
+          # Ensure ci-failure label exists (ignore error if already present)
+          gh label create ci-failure --color d73a4a --description "Automated CI test failure" 2>/dev/null || true
+
+          # Find existing open ci-failure issue number
+          ISSUE_NUMBER=$(gh issue list --state open --label ci-failure --json number --jq '.[0].number // empty')
+
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh issue comment "$ISSUE_NUMBER" --body "### :warning: New failure (${TODAY})
+
+          ${BODY}"
+          else
+            gh issue create \
+              --title "[CI] ${FAILED} failure detected" \
+              --body "$BODY" \
+              --label ci-failure
+          fi
 
       - name: Close ci-failure issue on success
         if: steps.build.outcome == 'success' && steps.test.outcome == 'success'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'ci-failure',
-            });
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            for (const issue of issues) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `:white_check_mark: All tests are passing again. See [run ${context.runId}](${runUrl}).`,
-              });
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed',
-              });
-            }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          ISSUE_NUMBERS=$(gh issue list --state open --label ci-failure --json number --jq '.[].number')
+
+          for ISSUE_NUMBER in $ISSUE_NUMBERS; do
+            gh issue comment "$ISSUE_NUMBER" \
+              --body ":white_check_mark: All tests are passing again. See [run ${{ github.run_id }}](${RUN_URL})."
+            gh issue close "$ISSUE_NUMBER"
+          done
 
       - name: Fail job if build or tests failed
         if: steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
