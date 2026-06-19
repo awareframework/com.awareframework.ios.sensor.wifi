@@ -128,6 +128,13 @@ class Observer:WiFiObserver {
 ```
 
 
+## Related Links
+
+- [NetworkExtension | Apple Developer Documentation](https://developer.apple.com/documentation/networkextension)
+- [NEHotspotNetwork | Apple Developer Documentation](https://developer.apple.com/documentation/networkextension/nehotspotnetwork)
+- [System Configuration | Apple Developer Documentation](https://developer.apple.com/documentation/systemconfiguration)
+- [Network | Apple Developer Documentation](https://developer.apple.com/documentation/network)
+
 ## Author
 Yuuki Nishiyama (The University of Tokyo), nishiyama@csis.u-tokyo.ac.jp
 
