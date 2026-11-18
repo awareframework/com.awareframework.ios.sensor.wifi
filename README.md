@@ -10,18 +10,17 @@ iOS 13 or later
 
 ## Installation
 
-You can integrate this framework into your project via Swift Package Manager (SwiftPM).
+Add the package with Swift Package Manager:
 
-### SwiftPM
-1. Open Package Manager Windows
-    * Open `Xcode` -> Select `Menu Bar` -> `File` -> `App Package Dependencies...`
+- Package URL: `https://github.com/awareframework/com.awareframework.ios.sensor.wifi.git`
+- Product: `com.awareframework.ios.sensor.wifi`
+- Module: `import com_awareframework_ios_sensor_wifi`
 
-2. Find the package using the manager
-    * Select `Search Package URL` and type `git@github.com:awareframework/com.awareframework.ios.sensor.wifi.git`
+See the [core package README](https://github.com/awareframework/com.awareframework.ios.core#installation) for the Xcode, `Package.swift` and command-line installation steps.
 
-3. Import the package into your target.
+**Info.plist:** none for this package. iOS returns the Wi-Fi SSID and BSSID only when the app also has location permission, so add `NSLocationWhenInUseUsageDescription` and request location access.
 
-4. Turn ON `Access WiFi Information` capability on the Xcode project
+**Capabilities:** add **Access WiFi Information** in *Signing & Capabilities*.
 
 ## Public Functions
 
