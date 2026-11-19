@@ -104,6 +104,9 @@ public class WiFiSensor: AwareSensor {
     private var wifiMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
     private var cellularMonitor = NWPathMonitor(requiredInterfaceType: .cellular)
     private let queue = DispatchQueue.global(qos: .background)
+    /// Rows are written here, in the order the access points were found, off the main thread.
+    /// `.utility`, since storing data is not work the user waits for.
+    private let saveQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.save", qos: .utility)
     // 現在のネットワーク状態
     var isConnected: Bool = false
     var isWifiConnected: Bool = false
@@ -269,17 +272,22 @@ public class WiFiSensor: AwareSensor {
         scanData.bssid = info.bssid
         scanData.security = info.security
         if let engine = self.dbEngine {
-            engine.save([scanData])
+            saveQueue.async { engine.save([scanData]) }
         }
-        if let wifiObserver = self.CONFIG.sensorObserver {
-            wifiObserver.onWiFiAPDetected(data: scanData)
+        // NEHotspotNetwork.fetchCurrent does not say which thread it calls back on: call the
+        // observer and post the notifications on the main thread
+        let notify = {
+            if let wifiObserver = self.CONFIG.sensorObserver {
+                wifiObserver.onWiFiAPDetected(data: scanData)
+            }
+            self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
+                                         object: self,
+                                         userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+            self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
+                                         object: self,
+                                         userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
         }
-        self.notificationCenter.post(name: .actionAwareWiFiCurrentAP,
-                                     object: self,
-                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
-        self.notificationCenter.post(name: .actionAwareWiFiNewDevice,
-                                     object: self,
-                                     userInfo: [WiFiSensor.EXTRA_DATA: scanData.toDictionary()])
+        if Thread.isMainThread { notify() } else { DispatchQueue.main.async(execute: notify) }
     }
 
     func getNetworkInfos(completion: @escaping ([NetworkInfo]) -> Void) {
