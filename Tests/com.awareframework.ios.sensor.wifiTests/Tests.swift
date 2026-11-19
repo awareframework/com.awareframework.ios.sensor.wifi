@@ -1,5 +1,5 @@
 import XCTest
-import com_awareframework_ios_sensor_wifi
+@testable import com_awareframework_ios_sensor_wifi
 import com_awareframework_ios_core
 
 class Tests: XCTestCase {
@@ -162,5 +162,24 @@ class Tests: XCTestCase {
         NotificationCenter.default.removeObserver(failureObserver)
 
         #endif
+    }
+
+    /// The sensor creates all its tables, and each table can be read back for sync by an engine
+    /// for that table (one engine used to be synced for every table, so only one was ever uploaded)
+    func testSensorCreatesAndSyncsEveryTable() {
+        let path = "create_table_test_\(UUID().uuidString)"
+        let sensor = WiFiSensor(WiFiSensor.Config().apply { config in config.dbPath = path })
+        guard let engine = sensor.dbEngine else { return XCTFail("no engine") }
+        let saved = expectation(description: "saved")
+        saved.expectedFulfillmentCount = 2
+        engine.save([WiFiScanData()]) { error in XCTAssertNil(error); saved.fulfill() }
+        engine.save([WiFiDeviceData()]) { error in XCTAssertNil(error); saved.fulfill() }
+        wait(for: [saved], timeout: 5)
+        func tableEngine(_ table: String) -> Engine {
+            Engine.Builder().setPath(path).setType(.sqlite).setTableName(table).build()
+        }
+        XCTAssertEqual(tableEngine(WiFiScanData.databaseTableName).fetch(filter: nil, limit: nil)?.count, 1, "WiFiScanData can be read for sync")
+        XCTAssertEqual(tableEngine(WiFiDeviceData.databaseTableName).fetch(filter: nil, limit: nil)?.count, 1, "WiFiDeviceData can be read for sync")
+        XCTAssertEqual(WiFiSensor.tables.map(\.name), [WiFiScanData.databaseTableName, WiFiDeviceData.databaseTableName])
     }
 }

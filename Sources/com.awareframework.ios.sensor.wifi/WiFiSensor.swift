@@ -122,6 +122,7 @@ public class WiFiSensor: AwareSensor {
         
         public override init() {
             super.init()
+            dbTableName = WiFiScanData.databaseTableName
             self.dbPath = "aware_wifi"
         }
         
@@ -142,10 +143,33 @@ public class WiFiSensor: AwareSensor {
         self.init(WiFiSensor.Config())
     }
     
+
+    /// Creates this sensor's tables if they do not exist yet, so that the first save does not fail.
+    /// Failures are logged: without the tables, the data cannot be saved or uploaded.
+    private func initializeTables() {
+        guard CONFIG.dbType == .sqlite else { return }
+        guard let queue = (dbEngine as? SQLiteEngine)?.getSQLiteInstance() else {
+            print(WiFiSensor.TAG, "[Error] Cannot open the database '\(CONFIG.dbPath)'. The tables are not created.")
+            return
+        }
+        let tables: [(name: String, create: () throws -> Void)] = [
+            (WiFiScanData.databaseTableName, { try WiFiScanData.createTable(queue: queue) }),
+            (WiFiDeviceData.databaseTableName, { try WiFiDeviceData.createTable(queue: queue) }),
+        ]
+        for table in tables {
+            do {
+                try table.create()
+            } catch {
+                print(WiFiSensor.TAG, "[Error] Cannot create the table '\(table.name)': \(error)")
+            }
+        }
+    }
+
     public init(_ config:WiFiSensor.Config){
         super.init()
         CONFIG = config
         initializeDbEngine(config: config)
+        initializeTables()
         super.syncConfig = DbSyncConfig().apply { c in
             c.dispatchQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.sync.queue")
         }
@@ -225,27 +249,51 @@ public class WiFiSensor: AwareSensor {
     
     
     
+    /// The tables of this sensor, with the type of their rows (for the sync completion notification).
+    static let tables: [(name: String, type: Any.Type)] = [
+        (WiFiScanData.databaseTableName, WiFiScanData.self),
+        (WiFiDeviceData.databaseTableName, WiFiDeviceData.self),
+    ]
+
+    /// One engine per table, used for upload. An engine uploads only the table named in its config,
+    /// so each table needs its own engine. `dbEngine` is reused for the table it already names.
+    /// (Up to now one engine was synced once per table, so only one table was ever uploaded.)
+    var syncEngines: [String: Engine] = [:]
+
+    private func syncEngine(for tableName: String) -> Engine? {
+        if let engine = syncEngines[tableName] { return engine }
+        let engine: Engine
+        if let main = dbEngine, main.config.tableName == tableName {
+            engine = main
+        } else {
+            engine = Engine.Builder()
+                .setPath(CONFIG.dbPath)
+                .setType(CONFIG.dbType)
+                .setHost(CONFIG.dbHost)
+                .setEncryptionKey(CONFIG.dbEncryptionKey)
+                .setTableName(tableName)
+                .build()
+        }
+        syncEngines[tableName] = engine
+        return engine
+    }
+
     public override func sync(force: Bool = false) {
-        guard let engine = self.dbEngine, let syncConfig = self.syncConfig else { return }
-        syncConfig.debug = self.CONFIG.debug
-        engine.startSync(syncConfig.apply { setting in
-            setting.completionHandler = { (status, error) in
+        guard let base = self.syncConfig else { return }
+        base.debug = self.CONFIG.debug
+        for table in WiFiSensor.tables {
+            // A copy per table, so that each table keeps its own completion handler and queue
+            let c = base.copy()
+            c.dispatchQueue = DispatchQueue(label: "com.awareframework.ios.sensor.wifi.sync.\(table.name)")
+            c.completionHandler = { (status, error) in
                 var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS: status,
-                                                        WiFiSensor.EXTRA_TABLE_NAME: WiFiDeviceData.databaseTableName,
-                                                        WiFiSensor.EXTRA_OBJECT_TYPE: WiFiDeviceData.self]
+                                                        WiFiSensor.EXTRA_TABLE_NAME: table.name,
+                                                        WiFiSensor.EXTRA_OBJECT_TYPE: table.type]
                 if let e = error { userInfo[WiFiSensor.EXTRA_ERROR] = e }
                 self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion, object: self, userInfo: userInfo)
             }
-        })
-        engine.startSync(syncConfig.apply { setting in
-            setting.completionHandler = { (status, error) in
-                var userInfo: Dictionary<String,Any> = [WiFiSensor.EXTRA_STATUS: status,
-                                                        WiFiSensor.EXTRA_TABLE_NAME: WiFiScanData.databaseTableName,
-                                                        WiFiSensor.EXTRA_OBJECT_TYPE: WiFiScanData.self]
-                if let e = error { userInfo[WiFiSensor.EXTRA_ERROR] = e }
-                self.notificationCenter.post(name: .actionAwareWiFiSyncCompletion, object: self, userInfo: userInfo)
-            }
-        })
+            syncEngine(for: table.name)?.startSync(c)
+        }
         self.notificationCenter.post(name: .actionAwareWiFiSync, object: self)
     }
     
